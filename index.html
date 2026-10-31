@@ -28,19 +28,139 @@
             background: linear-gradient(-45deg, #7fa88a, #6b9478, #86ad90, #5f8a6c);
             background-size: 400% 400%;
             animation: gradientShift 12s ease infinite;
+            /* Сверху резервируем место под панель действий */
             padding: 12px;
-            padding-top: 20px;
+            padding-top: 64px;
             padding-bottom: 40px;
             min-height: 100vh;
-            /* Защита от горизонтального скролла */
             overflow-x: hidden;
         }
 
+        /* ===== Панель действий сверху справа (закреплена) ===== */
+        .action-bar {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        /* Квадратная кнопка фильтров */
+        .filter-btn {
+            width: 44px;
+            height: 44px;
+            background: #345c42;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(40, 70, 50, 0.3);
+            transition: background 0.15s ease;
+            padding: 0;
+        }
+
+        .filter-btn:active {
+            background: #284a34;
+        }
+
+        /* Иконка "фильтры" (три полоски разной длины) */
+        .filter-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-start;
+        }
+
+        .filter-icon span {
+            display: block;
+            height: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+        }
+
+        .filter-icon span:nth-child(1) { width: 18px; }
+        .filter-icon span:nth-child(2) { width: 12px; }
+        .filter-icon span:nth-child(3) { width: 6px; }
+
+        /* ===== Мини-меню фильтров ===== */
+        .filter-menu {
+            display: none;
+            margin-top: 8px;
+            background: rgba(52, 92, 66, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 10px;
+            width: 200px;
+            box-shadow: 0 4px 14px rgba(30, 60, 40, 0.4);
+        }
+
+        .filter-menu.open {
+            display: block;
+        }
+
+        /* Кнопки сортировки по цене */
+        .sort-buttons {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .sort-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 4px;
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .sort-btn.active {
+            background: #ffffff;
+            color: #2f5a3d;
+        }
+
+        /* Поля ввода цены */
+        .price-range {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .price-range input {
+            flex: 1;
+            width: 0;
+            min-width: 0;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            padding: 7px 6px;
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: #2f5a3d;
+            outline: none;
+        }
+
+        .price-range span {
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ===== Сетка карточек ===== */
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            /* Чтобы колонки могли сжиматься и не вылезать */
             width: 100%;
         }
 
@@ -55,7 +175,6 @@
             flex-direction: column;
             padding: 10%;
             transition: transform 0.2s ease;
-            /* Ключевое: не даём карточке раздуваться шире колонки */
             min-width: 0;
             overflow: hidden;
         }
@@ -72,7 +191,7 @@
             min-height: 0;
         }
 
-        /* Картинка — теперь заметно больше (≈3.5 из 8) */
+        /* Картинка — остаток сверху */
         .card-image {
             flex: 1;
             background: rgba(255, 255, 255, 0.22);
@@ -80,7 +199,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
+            font-size: 26px;
             color: rgba(255, 255, 255, 0.7);
             font-weight: 700;
             user-select: none;
@@ -88,25 +207,37 @@
             overflow: hidden;
         }
 
-        /* Название — 2 из 8, прижато к кнопке (отступ снизу убран) */
+        /* Название — 2 из 8, прижато к цене снизу */
         .card-title {
             flex: 0 0 25%;
             display: flex;
             align-items: flex-end;
             justify-content: center;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             line-height: 1.1;
             font-weight: 700;
             color: #ffffff;
-            -webkit-text-stroke: 1px #2f5a3d;
+            -webkit-text-stroke: 0.9px #2f5a3d;
             paint-order: stroke fill;
             text-shadow: 0 1px 2px rgba(30, 60, 40, 0.4);
             overflow: hidden;
-            /* Уменьшенные боковые отступы, чтобы текст не вылезал */
             padding: 0 1px;
             word-break: break-word;
             overflow-wrap: anywhere;
+        }
+
+        /* Цена — 2 из 8, крупная, белая, без обводки */
+        .card-price {
+            flex: 0 0 25%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         /* Промежуток 0.5 из 8 */
@@ -124,10 +255,10 @@
             border: none;
             border-radius: 8px;
             font-family: 'Comfortaa', sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #ffffff;
-            -webkit-text-stroke: 1px #1f3a29;
+            -webkit-text-stroke: 0.9px #1f3a29;
             paint-order: stroke fill;
             cursor: pointer;
             transition: background 0.15s ease;
@@ -143,70 +274,170 @@
 </head>
 <body>
 
+    <!-- Закреплённая панель действий -->
+    <div class="action-bar">
+        <button class="filter-btn" id="filterBtn" aria-label="Фильтры">
+            <span class="filter-icon">
+                <span></span><span></span><span></span>
+            </span>
+        </button>
+        <div class="filter-menu" id="filterMenu">
+            <div class="sort-buttons">
+                <button class="sort-btn" id="sortDown">Цена ↓</button>
+                <button class="sort-btn" id="sortUp">Цена ↑</button>
+            </div>
+            <div class="price-range">
+                <input type="number" id="priceMin" placeholder="от" min="0">
+                <span>—</span>
+                <input type="number" id="priceMax" placeholder="до" min="0">
+            </div>
+        </div>
+    </div>
+
     <div class="grid" id="grid"></div>
 
     <script>
+        // Товары с ценами
         const products = [
-            "Кружка керамическая",
-            "Блокнот в клетку",
-            "Ручка гелевая",
-            "Наушники проводные",
-            "Чехол для телефона",
-            "Термокружка",
-            "Коврик для мыши",
-            "Лампа настольная",
-            "Кабель USB",
-            "Пенал",
-            "Зарядка беспроводная",
-            "Флешка 32 ГБ",
-            "Рюкзак городской",
-            "Зонт складной",
-            "Бутылка для воды",
-            "Стикеры для заметок",
-            "Клавиатура",
-            "Подставка для ноутбука",
-            "Кольцо для ключей",
-            "Кошелёк",
-            "Брелок",
-            "Носки (пара)",
-            "Шапка",
-            "Перчатки",
-            "Очки солнцезащитные",
-            "Часы наручные",
-            "Браслет"
+            { title: "Кружка керамическая", price: 450 },
+            { title: "Блокнот в клетку", price: 320 },
+            { title: "Ручка гелевая", price: 90 },
+            { title: "Наушники проводные", price: 1200 },
+            { title: "Чехол для телефона", price: 690 },
+            { title: "Термокружка", price: 890 },
+            { title: "Коврик для мыши", price: 550 },
+            { title: "Лампа настольная", price: 1490 },
+            { title: "Кабель USB", price: 250 },
+            { title: "Пенал", price: 380 },
+            { title: "Зарядка беспроводная", price: 1290 },
+            { title: "Флешка 32 ГБ", price: 640 },
+            { title: "Рюкзак городской", price: 2490 },
+            { title: "Зонт складной", price: 790 },
+            { title: "Бутылка для воды", price: 560 },
+            { title: "Стикеры для заметок", price: 150 },
+            { title: "Клавиатура", price: 1990 },
+            { title: "Подставка для ноутбука", price: 890 },
+            { title: "Кольцо для ключей", price: 120 },
+            { title: "Кошелёк", price: 1290 },
+            { title: "Брелок", price: 180 },
+            { title: "Носки (пара)", price: 210 },
+            { title: "Шапка", price: 690 },
+            { title: "Перчатки", price: 750 },
+            { title: "Очки солнцезащитные", price: 1190 },
+            { title: "Часы наручные", price: 3490 },
+            { title: "Браслет", price: 390 }
         ];
 
         const grid = document.getElementById('grid');
 
-        products.forEach(function(title) {
-            const card = document.createElement('div');
-            card.className = 'card';
+        // Состояние фильтров
+        let sortOrder = null; // null | 'down' | 'up'
+        let minPrice = null;
+        let maxPrice = null;
 
-            const inner = document.createElement('div');
-            inner.className = 'card-inner';
+        // Отрисовка сетки
+        function render() {
+            // Фильтрация
+            let list = products.filter(function(p) {
+                if (minPrice !== null && p.price < minPrice) return false;
+                if (maxPrice !== null && p.price > maxPrice) return false;
+                return true;
+            });
 
-            const image = document.createElement('div');
-            image.className = 'card-image';
-            image.textContent = '?';
+            // Сортировка
+            if (sortOrder === 'down') list.sort((a, b) => b.price - a.price);
+            if (sortOrder === 'up') list.sort((a, b) => a.price - b.price);
 
-            const titleEl = document.createElement('div');
-            titleEl.className = 'card-title';
-            titleEl.textContent = title;
+            grid.innerHTML = '';
 
-            const spacer05 = document.createElement('div');
-            spacer05.className = 'spacer-05';
+            list.forEach(function(product) {
+                const card = document.createElement('div');
+                card.className = 'card';
 
-            const btn = document.createElement('button');
-            btn.className = 'card-btn';
-            btn.textContent = 'В корзину';
+                const inner = document.createElement('div');
+                inner.className = 'card-inner';
 
-            inner.appendChild(image);
-            inner.appendChild(titleEl);
-            inner.appendChild(spacer05);
-            inner.appendChild(btn);
-            card.appendChild(inner);
-            grid.appendChild(card);
+                const image = document.createElement('div');
+                image.className = 'card-image';
+                image.textContent = '?';
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'card-title';
+                titleEl.textContent = product.title;
+
+                const priceEl = document.createElement('div');
+                priceEl.className = 'card-price';
+                priceEl.textContent = product.price + ' ₽';
+
+                const spacer05 = document.createElement('div');
+                spacer05.className = 'spacer-05';
+
+                const btn = document.createElement('button');
+                btn.className = 'card-btn';
+                btn.textContent = 'В корзину';
+
+                inner.appendChild(image);
+                inner.appendChild(titleEl);
+                inner.appendChild(priceEl);
+                inner.appendChild(spacer05);
+                inner.appendChild(btn);
+                card.appendChild(inner);
+                grid.appendChild(card);
+            });
+        }
+
+        // Открытие/закрытие меню фильтров
+        const filterBtn = document.getElementById('filterBtn');
+        const filterMenu = document.getElementById('filterMenu');
+
+        filterBtn.addEventListener('click', function() {
+            filterMenu.classList.toggle('open');
         });
+
+        // Кнопки сортировки (взаимоисключающие)
+        const sortDownBtn = document.getElementById('sortDown');
+        const sortUpBtn = document.getElementById('sortUp');
+
+        sortDownBtn.addEventListener('click', function() {
+            if (sortOrder === 'down') {
+                sortOrder = null;
+                sortDownBtn.classList.remove('active');
+            } else {
+                sortOrder = 'down';
+                sortDownBtn.classList.add('active');
+                sortUpBtn.classList.remove('active');
+            }
+            render();
+        });
+
+        sortUpBtn.addEventListener('click', function() {
+            if (sortOrder === 'up') {
+                sortOrder = null;
+                sortUpBtn.classList.remove('active');
+            } else {
+                sortOrder = 'up';
+                sortUpBtn.classList.add('active');
+                sortDownBtn.classList.remove('active');
+            }
+            render();
+        });
+
+        // Поля цены
+        const priceMinInput = document.getElementById('priceMin');
+        const priceMaxInput = document.getElementById('priceMax');
+
+        priceMinInput.addEventListener('input', function() {
+            minPrice = this.value === '' ? null : Number(this.value);
+            render();
+        });
+
+        priceMaxInput.addEventListener('input', function() {
+            maxPrice = this.value === '' ? null : Number(this.value);
+            render();
+        });
+
+        // Первый рендер
+        render();
     </script>
 </body>
 </html>
