@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
 
+    <!-- Подключаем файл с данными товаров -->
+    <script src="data.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -23,7 +26,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Переливается ТОЛЬКО фон страницы */
         body {
             font-family: 'Comfortaa', sans-serif;
             background: linear-gradient(-45deg, #8fa4b8, #6f869b, #a3b8ca, #7d93a8, #8fa4b8);
@@ -36,7 +38,7 @@
             overflow-x: hidden;
         }
 
-        /* ===== Закреплённая верхняя панель ===== */
+        /* ===== Верхняя панель ===== */
         .top-bar {
             position: fixed;
             top: 12px;
@@ -48,12 +50,9 @@
             gap: 8px;
         }
 
-        .settings-wrap {
-            position: relative;
-            flex: 0 0 auto;
-        }
+        .settings-wrap { position: relative; flex: 0 0 auto; }
 
-        .settings-btn {
+        .settings-btn, .filter-btn {
             width: 44px;
             height: 44px;
             background: #3e5266;
@@ -68,29 +67,26 @@
             color: #ffffff;
         }
 
-        .settings-btn:active { background: #2c3d4d; }
+        .settings-btn:active, .filter-btn:active { background: #2c3d4d; }
+        .settings-btn svg { width: 22px; height: 22px; }
 
-        .settings-btn svg {
-            width: 22px;
-            height: 22px;
-        }
-
-        .settings-menu {
+        .settings-menu, .filter-menu {
             display: none;
             position: absolute;
             top: 52px;
-            left: 0;
             background: rgba(62, 82, 102, 0.97);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
             padding: 6px;
-            width: 200px;
             box-shadow: 0 4px 14px rgba(30, 45, 60, 0.4);
+            z-index: 101;
         }
 
-        .settings-menu.open { display: block; }
+        .settings-menu { left: 0; width: 200px; }
+        .filter-menu { right: 0; width: 260px; }
+        .settings-menu.open, .filter-menu.open { display: block; }
 
-        .settings-item {
+        .settings-item, .category-btn, .sort-btn {
             display: block;
             width: 100%;
             text-align: center;
@@ -107,10 +103,16 @@
             transition: background 0.15s ease;
         }
 
-        .settings-item:active { background: rgba(255, 255, 255, 0.3); }
+        .settings-item + .settings-item,
+        .category-btn + .category-btn { margin-top: 4px; }
 
-        .settings-item + .settings-item {
-            margin-top: 4px;
+        .settings-item:active, .category-btn:active, .sort-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .category-btn.active, .sort-btn.active {
+            background: #ffffff;
+            color: #3e5266;
         }
 
         .search-panel {
@@ -127,16 +129,10 @@
             box-shadow: 0 2px 8px rgba(40, 55, 70, 0.25);
         }
 
-        .search-icon {
-            width: 16px;
-            height: 16px;
-            flex: 0 0 auto;
-            color: #2c3d4d;
-        }
+        .search-icon { width: 16px; height: 16px; color: #2c3d4d; }
 
         .search-input {
             flex: 1;
-            min-width: 0;
             border: none;
             outline: none;
             background: transparent;
@@ -146,31 +142,9 @@
             color: #2c3d4d;
         }
 
-        .search-input::placeholder {
-            color: #7f93a5;
-            font-weight: 600;
-        }
+        .search-input::placeholder { color: #7f93a5; font-weight: 600; }
 
-        .action-bar {
-            position: relative;
-            flex: 0 0 auto;
-        }
-
-        .filter-btn {
-            width: 44px;
-            height: 44px;
-            background: #3e5266;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(40, 55, 70, 0.3);
-            padding: 0;
-        }
-
-        .filter-btn:active { background: #2c3d4d; }
+        .action-bar { position: relative; flex: 0 0 auto; }
 
         .filter-icon {
             display: flex;
@@ -190,21 +164,6 @@
         .filter-icon span:nth-child(2) { width: 12px; }
         .filter-icon span:nth-child(3) { width: 6px; }
 
-        .filter-menu {
-            display: none;
-            position: absolute;
-            top: 52px;
-            right: 0;
-            background: rgba(62, 82, 102, 0.97);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            padding: 10px;
-            width: 260px;
-            box-shadow: 0 4px 14px rgba(30, 45, 60, 0.4);
-        }
-
-        .filter-menu.open { display: block; }
-
         .filter-row {
             display: flex;
             gap: 8px;
@@ -220,48 +179,11 @@
             min-width: 0;
         }
 
-        .category-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 7px;
-            padding: 5px 6px;
-            font-family: 'Comfortaa', sans-serif;
-            font-size: 9px;
-            font-weight: 700;
-            color: #ffffff;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.15s ease;
-        }
-
-        .category-btn.active {
-            background: #ffffff;
-            color: #3e5266;
-        }
-
         .sort-buttons {
             display: flex;
             flex-direction: column;
             gap: 4px;
             flex: 0 0 auto;
-        }
-
-        .sort-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 7px;
-            padding: 5px 6px;
-            font-family: 'Comfortaa', sans-serif;
-            font-size: 9px;
-            font-weight: 700;
-            color: #ffffff;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .sort-btn.active {
-            background: #ffffff;
-            color: #3e5266;
         }
 
         .price-range {
@@ -291,7 +213,7 @@
             font-weight: 700;
         }
 
-        /* ===== Сетка ===== */
+        /* ===== Сетка товаров ===== */
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -329,12 +251,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 700;
-            user-select: none;
             overflow: hidden;
             min-height: 0;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         .card-title {
@@ -395,12 +320,12 @@
             transition: transform 0.1s, background 0.15s;
         }
 
-        .card-btn:active { 
-            background: #2c3d4d; 
+        .card-btn:active {
+            background: #2c3d4d;
             transform: scale(0.95);
         }
 
-        /* ===== Кнопка Корзины (Floating, в стиле приложения) ===== */
+        /* ===== Плавающая кнопка корзины ===== */
         .cart-float-btn {
             position: fixed;
             bottom: 24px;
@@ -424,11 +349,7 @@
             background: #2c3d4d;
         }
 
-        .cart-float-btn svg {
-            width: 24px;
-            height: 24px;
-            color: #fff;
-        }
+        .cart-float-btn svg { width: 24px; height: 24px; color: #fff; }
 
         .cart-badge {
             position: absolute;
@@ -455,7 +376,7 @@
             transform: scale(1);
         }
 
-        /* ===== Экран Корзины ===== */
+        /* ===== Экран корзины ===== */
         .cart-screen {
             display: none;
             position: fixed;
@@ -468,9 +389,7 @@
             flex-direction: column;
         }
 
-        .cart-screen.open { 
-            display: flex; 
-        }
+        .cart-screen.open { display: flex; }
 
         .cart-header {
             position: sticky;
@@ -537,15 +456,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            color: #fff;
             flex-shrink: 0;
+            overflow: hidden;
         }
 
-        .cart-item-info {
-            flex: 1;
-            min-width: 0;
+        .cart-item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
+
+        .cart-item-info { flex: 1; min-width: 0; }
 
         .cart-item-title {
             font-size: 13px;
@@ -608,7 +529,7 @@
         .pay-btn {
             width: 100%;
             height: 50px;
-            background: #3e5266; /* Фирменный цвет приложения */
+            background: #3e5266;
             border: 1px solid rgba(255, 255, 255, 0.35);
             border-radius: 12px;
             color: #ffffff;
@@ -638,7 +559,7 @@
             opacity: 0.8;
         }
 
-        /* ===== Экран условий пользования (статичный фон) ===== */
+        /* ===== Экран условий ===== */
         .terms-screen {
             display: none;
             position: fixed;
@@ -676,14 +597,8 @@
             text-shadow: 0 1px 2px rgba(30, 45, 60, 0.4);
         }
 
-        .terms-body h2 {
-            font-size: 15px;
-            margin: 14px 0 6px;
-        }
-
-        .terms-body p {
-            margin-bottom: 10px;
-        }
+        .terms-body h2 { font-size: 15px; margin: 14px 0 6px; }
+        .terms-body p { margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -735,7 +650,7 @@
 
     <div class="grid" id="grid"></div>
 
-    <!-- Плавающая кнопка корзины (в стиле кнопок приложения) -->
+    <!-- Плавающая кнопка корзины -->
     <div class="cart-float-btn" id="cartFloatBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="9" cy="21" r="1"></circle>
@@ -745,7 +660,7 @@
         <div class="cart-badge" id="cartBadge">0</div>
     </div>
 
-    <!-- Экран Корзины -->
+    <!-- Экран корзины -->
     <div class="cart-screen" id="cartScreen">
         <div class="cart-header">
             <button class="back-btn" id="cartBack" aria-label="Назад">
@@ -755,19 +670,15 @@
             </button>
             <div class="screen-title">Корзина</div>
         </div>
-        
-        <div class="cart-list" id="cartList">
-            <!-- Сюда JS добавит товары -->
-        </div>
+
+        <div class="cart-list" id="cartList"></div>
 
         <div class="pay-btn-container">
-            <button class="pay-btn" id="payBtn">
-                Оплатить корзину (0 ₽)
-            </button>
+            <button class="pay-btn" id="payBtn">Оплатить корзину (0 ₽)</button>
         </div>
     </div>
 
-    <!-- Экран Условий -->
+    <!-- Экран условий -->
     <div class="terms-screen" id="termsScreen">
         <div class="terms-header">
             <button class="back-btn" id="termsBack" aria-label="Назад">
@@ -790,58 +701,17 @@
     </div>
 
     <script>
-        const CATEGORIES = ['godly', 'ancient', 'vintage', 'ножи', 'пистолеты'];
-
-        const products = [
-            { title: "Кружка керамическая", price: 450, category: "vintage" },
-            { title: "Блокнот в клетку", price: 320, category: "vintage" },
-            { title: "Ручка гелевая", price: 90, category: "vintage" },
-            { title: "Наушники проводные", price: 1200, category: "ancient" },
-            { title: "Чехол для телефона", price: 690, category: "ancient" },
-            { title: "Термокружка", price: 890, category: "vintage" },
-            { title: "Коврик для мыши", price: 550, category: "ancient" },
-            { title: "Лампа настольная", price: 1490, category: "godly" },
-            { title: "Кабель USB", price: 250, category: "ancient" },
-            { title: "Пенал", price: 380, category: "vintage" },
-            { title: "Зарядка беспроводная", price: 1290, category: "ancient" },
-            { title: "Флешка 32 ГБ", price: 640, category: "ancient" },
-            { title: "Рюкзак городской", price: 2490, category: "godly" },
-            { title: "Зонт складной", price: 790, category: "vintage" },
-            { title: "Бутылка для воды", price: 560, category: "vintage" },
-            { title: "Стикеры для заметок", price: 150, category: "vintage" },
-            { title: "Клавиатура", price: 1990, category: "godly" },
-            { title: "Подставка для ноутбука", price: 890, category: "ancient" },
-            { title: "Кольцо для ключей", price: 120, category: "vintage" },
-            { title: "Кошелёк", price: 1290, category: "ancient" },
-            { title: "Брелок", price: 180, category: "vintage" },
-            { title: "Носки (пара)", price: 210, category: "vintage" },
-            { title: "Шапка", price: 690, category: "vintage" },
-            { title: "Перчатки", price: 750, category: "vintage" },
-            { title: "Очки солнцезащитные", price: 1190, category: "ancient" },
-            { title: "Часы наручные", price: 3490, category: "godly" },
-            { title: "Браслет", price: 390, category: "vintage" }
-        ];
-
-        products.push(
-            { title: "Нож складной", price: 1590, category: "ножи" },
-            { title: "Нож охотничий", price: 2790, category: "ножи" },
-            { title: "Нож кухонный", price: 890, category: "ножи" },
-            { title: "Пистолет водяной", price: 490, category: "пистолеты" },
-            { title: "Пистолет пневматический", price: 3990, category: "пистолеты" },
-            { title: "Пистолет страйкбольный", price: 2190, category: "пистолеты" }
-        );
-
-        // Хранилище корзины: { "Название товара": { ...product, qty: 1 } }
+        // ===== ПЕРЕМЕННЫЕ СОСТОЯНИЯ =====
         let cart = {};
-
-        const grid = document.getElementById('grid');
-
         let sortOrder = null;
         let minPrice = null;
         let maxPrice = null;
         let selectedCategories = [];
         let searchQuery = '';
 
+        const grid = document.getElementById('grid');
+
+        // ===== ПОСТРОЕНИЕ КНОПОК КАТЕГОРИЙ =====
         const categoriesContainer = document.getElementById('categories');
         CATEGORIES.forEach(function(cat) {
             const btn = document.createElement('button');
@@ -863,15 +733,27 @@
             categoriesContainer.appendChild(btn);
         });
 
+        // ===== РЕНДЕР СЕТКИ ТОВАРОВ =====
         function render() {
             let list = products.filter(function(p) {
+                // Фильтр по цене
                 if (minPrice !== null && p.price < minPrice) return false;
                 if (maxPrice !== null && p.price > maxPrice) return false;
-                if (selectedCategories.length > 0 && selectedCategories.indexOf(p.category) === -1) return false;
+
+                // Фильтр по категориям (массив у товара)
+                // Показываем товар, если у него есть ХОТЯ БЫ ОДНА из выбранных категорий
+                if (selectedCategories.length > 0) {
+                    const hasCategory = p.category.some(cat => selectedCategories.includes(cat));
+                    if (!hasCategory) return false;
+                }
+
+                // Поиск по названию
                 if (searchQuery !== '' && p.title.toLowerCase().indexOf(searchQuery) === -1) return false;
+
                 return true;
             });
 
+            // Сортировка
             if (sortOrder === 'down') list.sort((a, b) => b.price - a.price);
             if (sortOrder === 'up') list.sort((a, b) => a.price - b.price);
 
@@ -886,7 +768,15 @@
 
                 const image = document.createElement('div');
                 image.className = 'card-image';
-                image.textContent = '?';
+                const img = document.createElement('img');
+                img.src = product.image;
+                img.alt = product.title;
+                img.onerror = function() {
+                    // Если картинка не загрузилась — показываем "?"
+                    this.style.display = 'none';
+                    image.textContent = '?';
+                };
+                image.appendChild(img);
 
                 const titleEl = document.createElement('div');
                 titleEl.className = 'card-title';
@@ -899,11 +789,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'card-btn';
                 btn.textContent = 'В корзину';
-                
-                // Обработчик добавления в корзину
-                btn.onclick = function() {
-                    addToCart(product);
-                };
+                btn.onclick = function() { addToCart(product); };
 
                 inner.appendChild(image);
                 inner.appendChild(titleEl);
@@ -915,7 +801,6 @@
         }
 
         // ===== ЛОГИКА КОРЗИНЫ =====
-
         function addToCart(product) {
             if (!cart[product.title]) {
                 cart[product.title] = { ...product, qty: 1 };
@@ -923,8 +808,7 @@
                 cart[product.title].qty++;
             }
             updateCartUI();
-            
-            // Визуальный эффект на кнопке корзины
+
             const floatBtn = document.getElementById('cartFloatBtn');
             floatBtn.style.transform = 'scale(1.1)';
             setTimeout(() => floatBtn.style.transform = 'scale(1)', 150);
@@ -945,24 +829,23 @@
             for (let key in cart) {
                 totalQty += cart[key].qty;
             }
-            
+
             badge.textContent = totalQty;
             if (totalQty > 0) {
                 badge.classList.add('visible');
             } else {
                 badge.classList.remove('visible');
             }
-            
-            // Обновляем сумму на кнопке оплаты
+
             updateCartTotal();
         }
 
         function renderCartScreen() {
             const container = document.getElementById('cartList');
             container.innerHTML = '';
-            
+
             const keys = Object.keys(cart);
-            
+
             if (keys.length === 0) {
                 container.innerHTML = '<div class="empty-cart-msg">Корзина пуста 😔</div>';
                 return;
@@ -972,9 +855,11 @@
                 const item = cart[key];
                 const div = document.createElement('div');
                 div.className = 'cart-item';
-                
+
                 div.innerHTML = `
-                    <div class="cart-item-img">?</div>
+                    <div class="cart-item-img">
+                        <img src="${item.image}" alt="${item.title}" onerror="this.style.display='none';this.parentElement.textContent='?'">
+                    </div>
                     <div class="cart-item-info">
                         <div class="cart-item-title">${item.title}</div>
                         <div class="cart-item-price">${item.price} ₽</div>
@@ -989,7 +874,6 @@
             });
         }
 
-        // Делаем функцию доступной глобально для onclick в HTML
         window.changeQty = function(title, delta) {
             if (cart[title]) {
                 cart[title].qty += delta;
@@ -1001,7 +885,7 @@
             }
         };
 
-        // Открытие/Закрытие корзины
+        // Открытие/закрытие корзины
         const cartFloatBtn = document.getElementById('cartFloatBtn');
         const cartScreen = document.getElementById('cartScreen');
         const cartBackBtn = document.getElementById('cartBack');
@@ -1024,9 +908,7 @@
             alert('Переход к оплате... (функционал будет позже)');
         });
 
-
-        // ===== СТАРЫЙ КОД ИНТЕРФЕЙСА =====
-
+        // ===== МЕНЮ НАСТРОЕК =====
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsMenu = document.getElementById('settingsMenu');
 
@@ -1060,6 +942,7 @@
             termsScreen.classList.remove('open');
         });
 
+        // ===== МЕНЮ ФИЛЬТРОВ =====
         const filterBtn = document.getElementById('filterBtn');
         const filterMenu = document.getElementById('filterMenu');
 
@@ -1120,7 +1003,7 @@
             render();
         });
 
-        // Инициализация суммы при загрузке
+        // ===== ЗАПУСК =====
         updateCartTotal();
         render();
     </script>
