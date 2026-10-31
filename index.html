@@ -1,11 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Тест</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Сброс отступов и базовые настройки */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f2f2f2;
+            padding: 12px;
+            /* Отступ сверху, чтобы не перекрывало кнопки Telegram */
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+
+        /* Сетка: ровно 3 колонки */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        /* Карточка товара в пропорции золотого сечения (1 : 1.618) */
+        .card {
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            /* Золотое сечение: ширина / высота ≈ 1 / 1.618 */
+            aspect-ratio: 1 / 1.618;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Верхняя часть — "картинка" (пока знак вопроса) */
+        .card-image {
+            flex: 1; /* занимает всё оставшееся место сверху */
+            background: #e8e8e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #b0b0b0;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        /* Нижняя часть — название товара */
+        .card-title {
+            padding: 8px 6px;
+            font-size: 12px;
+            line-height: 1.3;
+            text-align: center;
+            color: #333;
+            background: #ffffff;
+            border-top: 1px solid #eee;
+            /* Ограничиваем название двумя строками */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 42px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Привет, это Mini App</h1>
+
+    <!-- Контейнер сетки -->
+    <div class="grid" id="grid"></div>
+
+    <script>
+        // Список названий товаров (27 штук)
+        const products = [
+            "Кружка керамическая",
+            "Блокнот в клетку",
+            "Ручка гелевая",
+            "Наушники проводные",
+            "Чехол для телефона",
+            "Термокружка",
+            "Коврик для мыши",
+            "Лампа настольная",
+            "Кабель USB",
+            "Пенал",
+            "Зарядка беспроводная",
+            "Флешка 32 ГБ",
+            "Рюкзак городской",
+            "Зонт складной",
+            "Бутылка для воды",
+            "Стикеры для заметок",
+            "Клавиатура",
+            "Подставка для ноутбука",
+            "Кольцо для ключей",
+            "Кошелёк",
+            "Брелок",
+            "Носки (пара)",
+            "Шапка",
+            "Перчатки",
+            "Очки солнцезащитные",
+            "Часы наручные",
+            "Браслет"
+        ];
+
+        // Получаем контейнер
+        const grid = document.getElementById('grid');
+
+        // Создаём карточки для каждого товара
+        products.forEach(function(title) {
+            // Карточка
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            // Верхняя часть — знак вопроса вместо картинки
+            const image = document.createElement('div');
+            image.className = 'card-image';
+            image.textContent = '?';
+
+            // Нижняя часть — название
+            const titleEl = document.createElement('div');
+            titleEl.className = 'card-title';
+            titleEl.textContent = title;
+
+            // Собираем карточку
+            card.appendChild(image);
+            card.appendChild(titleEl);
+
+            // Добавляем в сетку
+            grid.appendChild(card);
+        });
+    </script>
 </body>
 </html>
