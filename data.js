@@ -7,17 +7,30 @@ const CATEGORIES = ['godly', 'ancient', 'vintage', 'ножи', 'пистолет
 const products = [
     {
         id: 1,
-        title: "Ice Piercer",
+        title: "тест Godly",
+        price: 250,
+        category: ["godly", "пистолеты"],   // товар сразу в двух категориях
+        image: "images/icepiercer.png"
+    },
+    {
+        id: 2,
+        title: "тест Ancient",
         price: 250,
         category: ["ancient", "пистолеты"],   // товар сразу в двух категориях
         image: "images/icepiercer.png"
-    }
-    // Пример добавления ещё одного товара:
-    // {
-    //     id: 2,
-    //     title: "Двойной клинок",
-    //     price: 1500,
-    //     category: ["ancient", "ножи"],
-    //     image: "images/doubleblade.png"
-    // },
+    },
+    {
+    id: 3,
+    title: "Тест Chroma",
+    price: 100,
+    category: ["chroma", "ножи"],  // радужный фон
+    image: "images/icepiercer.png"
+},
+{
+    id: 4,
+    title: "Тест Vintage",
+    price: 100,
+    category: ["vintage", "пистолеты"],  // желтый фон
+    image: "images/icepiercer.png"
+}
 ];
