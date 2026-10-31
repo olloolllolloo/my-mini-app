@@ -87,29 +87,67 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
             padding: 10px;
-            width: 200px;
+            width: 260px;
             box-shadow: 0 4px 14px rgba(30, 60, 40, 0.4);
         }
 
         .filter-menu.open { display: block; }
 
-        .sort-buttons {
+        /* Строка: категории слева, сортировка справа */
+        .filter-row {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 8px;
+            align-items: flex-start;
         }
 
-        .sort-btn {
+        /* Блок категорий */
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
             flex: 1;
+            min-width: 0;
+        }
+
+        .category-btn {
             background: rgba(255, 255, 255, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            padding: 8px 4px;
+            border-radius: 7px;
+            padding: 5px 6px;
             font-family: 'Comfortaa', sans-serif;
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 700;
             color: #ffffff;
             cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s ease;
+        }
+
+        .category-btn.active {
+            background: #ffffff;
+            color: #2f5a3d;
+        }
+
+        /* Блок сортировки */
+        .sort-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 0 0 auto;
+        }
+
+        .sort-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 7px;
+            padding: 5px 6px;
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 9px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            white-space: nowrap;
         }
 
         .sort-btn.active {
@@ -174,7 +212,6 @@
             min-height: 0;
         }
 
-        /* КАРТИНКА — уже не строгий квадрат, а всё оставшееся место */
         .card-image {
             flex: 1 1 auto;
             width: 100%;
@@ -191,12 +228,13 @@
             min-height: 0;
         }
 
-        /* Название — высота по фактическому числу строк */
         .card-title {
             flex: 0 0 auto;
-            display: block;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
             text-align: center;
-            font-size: 12px;
+            font-size: 10px;
             line-height: 1.15;
             font-weight: 700;
             color: #ffffff;
@@ -207,22 +245,15 @@
             padding: 2px 1px 0;
             word-break: break-word;
             overflow-wrap: anywhere;
-            /* Резервируем место ровно под две строки, чтобы сетка не прыгала,
-               но если текст в одну строку — он занимает одну строку,
-               а пустое место остаётся между названием и картинкой */
             min-height: calc(2 * 1.15em);
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
         }
 
-        /* Цена — снова БЕЛАЯ, вплотную к кнопке */
         .card-price {
             flex: 0 0 auto;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             color: #ffffff;
             white-space: nowrap;
@@ -232,7 +263,6 @@
             margin-bottom: -1px;
         }
 
-        /* Кнопка — чуть меньше */
         .card-btn {
             flex: 0 0 auto;
             height: 26px;
@@ -267,9 +297,12 @@
             </span>
         </button>
         <div class="filter-menu" id="filterMenu">
-            <div class="sort-buttons">
-                <button class="sort-btn" id="sortDown">Цена ↓</button>
-                <button class="sort-btn" id="sortUp">Цена ↑</button>
+            <div class="filter-row">
+                <div class="categories" id="categories"></div>
+                <div class="sort-buttons">
+                    <button class="sort-btn" id="sortDown">Цена ↓</button>
+                    <button class="sort-btn" id="sortUp">Цена ↑</button>
+                </div>
             </div>
             <div class="price-range">
                 <input type="number" id="priceMin" placeholder="от" min="0">
@@ -282,46 +315,83 @@
     <div class="grid" id="grid"></div>
 
     <script>
+        // Категории
+        const CATEGORIES = ['godly', 'ancient', 'vintage', 'ножи', 'пистолеты'];
+
         const products = [
-            { title: "Кружка керамическая", price: 450 },
-            { title: "Блокнот в клетку", price: 320 },
-            { title: "Ручка гелевая", price: 90 },
-            { title: "Наушники проводные", price: 1200 },
-            { title: "Чехол для телефона", price: 690 },
-            { title: "Термокружка", price: 890 },
-            { title: "Коврик для мыши", price: 550 },
-            { title: "Лампа настольная", price: 1490 },
-            { title: "Кабель USB", price: 250 },
-            { title: "Пенал", price: 380 },
-            { title: "Зарядка беспроводная", price: 1290 },
-            { title: "Флешка 32 ГБ", price: 640 },
-            { title: "Рюкзак городской", price: 2490 },
-            { title: "Зонт складной", price: 790 },
-            { title: "Бутылка для воды", price: 560 },
-            { title: "Стикеры для заметок", price: 150 },
-            { title: "Клавиатура", price: 1990 },
-            { title: "Подставка для ноутбука", price: 890 },
-            { title: "Кольцо для ключей", price: 120 },
-            { title: "Кошелёк", price: 1290 },
-            { title: "Брелок", price: 180 },
-            { title: "Носки (пара)", price: 210 },
-            { title: "Шапка", price: 690 },
-            { title: "Перчатки", price: 750 },
-            { title: "Очки солнцезащитные", price: 1190 },
-            { title: "Часы наручные", price: 3490 },
-            { title: "Браслет", price: 390 }
+            { title: "Кружка керамическая", price: 450, category: "vintage" },
+            { title: "Блокнот в клетку", price: 320, category: "vintage" },
+            { title: "Ручка гелевая", price: 90, category: "vintage" },
+            { title: "Наушники проводные", price: 1200, category: "ancient" },
+            { title: "Чехол для телефона", price: 690, category: "ancient" },
+            { title: "Термокружка", price: 890, category: "vintage" },
+            { title: "Коврик для мыши", price: 550, category: "ancient" },
+            { title: "Лампа настольная", price: 1490, category: "godly" },
+            { title: "Кабель USB", price: 250, category: "ancient" },
+            { title: "Пенал", price: 380, category: "vintage" },
+            { title: "Зарядка беспроводная", price: 1290, category: "ancient" },
+            { title: "Флешка 32 ГБ", price: 640, category: "ancient" },
+            { title: "Рюкзак городской", price: 2490, category: "godly" },
+            { title: "Зонт складной", price: 790, category: "vintage" },
+            { title: "Бутылка для воды", price: 560, category: "vintage" },
+            { title: "Стикеры для заметок", price: 150, category: "vintage" },
+            { title: "Клавиатура", price: 1990, category: "godly" },
+            { title: "Подставка для ноутбука", price: 890, category: "ancient" },
+            { title: "Кольцо для ключей", price: 120, category: "vintage" },
+            { title: "Кошелёк", price: 1290, category: "ancient" },
+            { title: "Брелок", price: 180, category: "vintage" },
+            { title: "Носки (пара)", price: 210, category: "vintage" },
+            { title: "Шапка", price: 690, category: "vintage" },
+            { title: "Перчатки", price: 750, category: "vintage" },
+            { title: "Очки солнцезащитные", price: 1190, category: "ancient" },
+            { title: "Часы наручные", price: 3490, category: "godly" },
+            { title: "Браслет", price: 390, category: "vintage" }
         ];
+
+        // Добавим товары в категории "ножи" и "пистолеты", чтобы фильтр было видно
+        products.push(
+            { title: "Нож складной", price: 1590, category: "ножи" },
+            { title: "Нож охотничий", price: 2790, category: "ножи" },
+            { title: "Нож кухонный", price: 890, category: "ножи" },
+            { title: "Пистолет водяной", price: 490, category: "пистолеты" },
+            { title: "Пистолет пневматический", price: 3990, category: "пистолеты" },
+            { title: "Пистолет страйкбольный", price: 2190, category: "пистолеты" }
+        );
 
         const grid = document.getElementById('grid');
 
         let sortOrder = null;
         let minPrice = null;
         let maxPrice = null;
+        let selectedCategories = []; // выбранные категории (мультивыбор)
+
+        // Создаём кнопки категорий
+        const categoriesContainer = document.getElementById('categories');
+        CATEGORIES.forEach(function(cat) {
+            const btn = document.createElement('button');
+            btn.className = 'category-btn';
+            btn.textContent = cat;
+            btn.dataset.category = cat;
+            btn.addEventListener('click', function() {
+                const idx = selectedCategories.indexOf(cat);
+                if (idx === -1) {
+                    selectedCategories.push(cat);
+                    btn.classList.add('active');
+                } else {
+                    selectedCategories.splice(idx, 1);
+                    btn.classList.remove('active');
+                }
+                render();
+            });
+            categoriesContainer.appendChild(btn);
+        });
 
         function render() {
             let list = products.filter(function(p) {
                 if (minPrice !== null && p.price < minPrice) return false;
                 if (maxPrice !== null && p.price > maxPrice) return false;
+                // Если выбраны категории — товар должен быть хотя бы в одной из них
+                if (selectedCategories.length > 0 && selectedCategories.indexOf(p.category) === -1) return false;
                 return true;
             });
 
