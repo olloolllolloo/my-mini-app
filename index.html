@@ -221,6 +221,7 @@
         }
 
         .card {
+            background: rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.35);
             border-radius: 12px;
@@ -231,8 +232,6 @@
             padding: 10%;
             min-width: 0;
             overflow: hidden;
-            /* Фон задаётся через JS в зависимости от категории */
-            background: rgba(255, 255, 255, 0.18);
         }
 
         .card-inner {
@@ -246,13 +245,14 @@
         .card-image {
             flex: 1 1 auto;
             width: 100%;
-            background: rgba(255, 255, 255, 0.22);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             min-height: 0;
+            /* Фон задаётся через JS в зависимости от категории */
+            background: rgba(255, 255, 255, 0.22);
         }
 
         .card-image img {
@@ -706,20 +706,18 @@
             const cats = Array.isArray(categories) ? categories : [categories];
 
             if (cats.includes('chroma')) {
-                // Пастельный радужный градиент (без анимации)
                 return 'linear-gradient(135deg, #ffb3ba 0%, #ffdfba 20%, #ffffba 40%, #baffc9 60%, #bae1ff 80%, #e0baff 100%)';
             }
             if (cats.includes('godly')) {
-                return 'rgba(255, 150, 200, 0.45)'; // розовый
+                return 'rgba(255, 150, 200, 0.45)';
             }
             if (cats.includes('ancient')) {
-                return 'rgba(180, 140, 230, 0.45)'; // фиолетовый
+                return 'rgba(180, 140, 230, 0.45)';
             }
             if (cats.includes('vintage')) {
-                return 'rgba(255, 230, 130, 0.45)'; // желтый
+                return 'rgba(255, 230, 130, 0.45)';
             }
-            // Дефолт — нейтральный полупрозрачный
-            return 'rgba(255, 255, 255, 0.18)';
+            return 'rgba(255, 255, 255, 0.22)';
         }
 
         // ===== ПЕРЕМЕННЫЕ СОСТОЯНИЯ =====
@@ -778,14 +776,15 @@
             list.forEach(function(product) {
                 const card = document.createElement('div');
                 card.className = 'card';
-                // Устанавливаем цвет фона в зависимости от категории
-                card.style.background = getCategoryBackground(product.category);
 
                 const inner = document.createElement('div');
                 inner.className = 'card-inner';
 
                 const image = document.createElement('div');
                 image.className = 'card-image';
+                // 🔑 Цвет фона применяется ТОЛЬКО к блоку картинки
+                image.style.background = getCategoryBackground(product.category);
+
                 const img = document.createElement('img');
                 img.src = product.image;
                 img.alt = product.title;
