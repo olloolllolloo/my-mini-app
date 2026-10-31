@@ -47,24 +47,89 @@
             gap: 8px;
         }
 
-        /* Поисковая панель */
+        /* Кнопка настроек (квадрат) */
+        .settings-wrap {
+            position: relative;
+            flex: 0 0 auto;
+        }
+
+        .settings-btn {
+            width: 44px;
+            height: 44px;
+            background: #345c42;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(40, 70, 50, 0.3);
+            padding: 0;
+            color: #ffffff;
+        }
+
+        .settings-btn:active { background: #284a34; }
+
+        .settings-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Меню настроек */
+        .settings-menu {
+            display: none;
+            position: absolute;
+            top: 52px;
+            left: 0;
+            background: rgba(52, 92, 66, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 6px;
+            width: 200px;
+            box-shadow: 0 4px 14px rgba(30, 60, 40, 0.4);
+        }
+
+        .settings-menu.open { display: block; }
+
+        .settings-item {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .settings-item:active { background: rgba(255, 255, 255, 0.15); }
+
+        .settings-item + .settings-item {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Поисковая панель — чуть уже по высоте */
         .search-panel {
             flex: 1;
             min-width: 0;
-            height: 44px;
+            height: 38px;
             display: flex;
             align-items: center;
             gap: 8px;
             background: rgba(255, 255, 255, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 12px;
-            padding: 0 12px;
+            border-radius: 10px;
+            padding: 0 10px;
             box-shadow: 0 2px 8px rgba(40, 70, 50, 0.25);
         }
 
         .search-icon {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             flex: 0 0 auto;
             color: #2f5a3d;
         }
@@ -76,7 +141,7 @@
             outline: none;
             background: transparent;
             font-family: 'Comfortaa', sans-serif;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #2f5a3d;
         }
@@ -141,7 +206,6 @@
 
         .filter-menu.open { display: block; }
 
-        /* Строка: категории слева, сортировка справа */
         .filter-row {
             display: flex;
             gap: 8px;
@@ -149,7 +213,6 @@
             align-items: flex-start;
         }
 
-        /* Блок категорий */
         .categories {
             display: flex;
             flex-wrap: wrap;
@@ -177,7 +240,6 @@
             color: #2f5a3d;
         }
 
-        /* Блок сортировки */
         .sort-buttons {
             display: flex;
             flex-direction: column;
@@ -334,12 +396,99 @@
         }
 
         .card-btn:active { background: #284a34; }
+
+        /* ===== Экран условий пользования ===== */
+        .terms-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: linear-gradient(-45deg, #7fa88a, #6b9478, #86ad90, #5f8a6c);
+            background-size: 400% 400%;
+            animation: gradientShift 12s ease infinite;
+            padding: 12px;
+            overflow-y: auto;
+        }
+
+        .terms-screen.open { display: block; }
+
+        .terms-header {
+            position: sticky;
+            top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0 12px;
+            background: linear-gradient(-45deg, #7fa88a, #6b9478, #86ad90, #5f8a6c);
+            background-size: 400% 400%;
+        }
+
+        .back-btn {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 auto;
+            background: #345c42;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(40, 70, 50, 0.3);
+            padding: 0;
+        }
+
+        .back-btn:active { background: #284a34; }
+
+        .terms-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            -webkit-text-stroke: 0.6px #2f5a3d;
+            paint-order: stroke fill;
+        }
+
+        .terms-body {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 12px;
+            padding: 16px;
+            color: #ffffff;
+            font-size: 13px;
+            line-height: 1.6;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(30, 60, 40, 0.4);
+        }
+
+        .terms-body h2 {
+            font-size: 15px;
+            margin: 14px 0 6px;
+        }
+
+        .terms-body p {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Закреплённая верхняя панель: поиск слева, фильтры справа -->
+    <!-- Закреплённая верхняя панель: настройки, поиск, фильтры -->
     <div class="top-bar">
+        <div class="settings-wrap">
+            <button class="settings-btn" id="settingsBtn" aria-label="Настройки">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+            <div class="settings-menu" id="settingsMenu">
+                <button class="settings-item" id="supportItem">Поддержка</button>
+                <button class="settings-item" id="termsItem">Условия пользования</button>
+            </div>
+        </div>
+
         <div class="search-panel">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                 <circle cx="10.5" cy="10.5" r="6.5"></circle>
@@ -347,6 +496,7 @@
             </svg>
             <input type="text" id="searchInput" class="search-input" placeholder="ищу...">
         </div>
+
         <div class="action-bar">
             <button class="filter-btn" id="filterBtn" aria-label="Фильтры">
                 <span class="filter-icon">
@@ -371,6 +521,28 @@
     </div>
 
     <div class="grid" id="grid"></div>
+
+    <!-- Экран условий пользования -->
+    <div class="terms-screen" id="termsScreen">
+        <div class="terms-header">
+            <button class="back-btn" id="termsBack" aria-label="Назад">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="terms-title">Условия пользования</div>
+        </div>
+        <div class="terms-body">
+            <h2>1. Общие положения</h2>
+            <p>Настоящие условия регулируют использование данного мини-приложения. Используя приложение, вы соглашаетесь с этими условиями.</p>
+            <h2>2. Товары и цены</h2>
+            <p>Все цены указаны в рублях. Информация о товарах носит ознакомительный характер и может быть изменена без предварительного уведомления.</p>
+            <h2>3. Заказы</h2>
+            <p>Нажимая кнопку «В корзину», вы формируете список товаров для дальнейшего оформления заказа.</p>
+            <h2>4. Контакты</h2>
+            <p>По любым вопросам обращайтесь в поддержку: @DrBled в Telegram.</p>
+        </div>
+    </div>
 
     <script>
         // Категории
@@ -406,7 +578,6 @@
             { title: "Браслет", price: 390, category: "vintage" }
         ];
 
-        // Дополнительные товары в категориях "ножи" и "пистолеты"
         products.push(
             { title: "Нож складной", price: 1590, category: "ножи" },
             { title: "Нож охотничий", price: 2790, category: "ножи" },
@@ -421,10 +592,10 @@
         let sortOrder = null;
         let minPrice = null;
         let maxPrice = null;
-        let selectedCategories = []; // выбранные категории (мультивыбор)
-        let searchQuery = '';        // поисковый запрос
+        let selectedCategories = [];
+        let searchQuery = '';
 
-        // Создаём кнопки категорий
+        // Кнопки категорий
         const categoriesContainer = document.getElementById('categories');
         CATEGORIES.forEach(function(cat) {
             const btn = document.createElement('button');
@@ -450,7 +621,6 @@
                 if (minPrice !== null && p.price < minPrice) return false;
                 if (maxPrice !== null && p.price > maxPrice) return false;
                 if (selectedCategories.length > 0 && selectedCategories.indexOf(p.category) === -1) return false;
-                // Поиск по названию (без учёта регистра)
                 if (searchQuery !== '' && p.title.toLowerCase().indexOf(searchQuery) === -1) return false;
                 return true;
             });
@@ -492,6 +662,44 @@
             });
         }
 
+        // ===== Настройки =====
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsMenu = document.getElementById('settingsMenu');
+
+        settingsBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            settingsMenu.classList.toggle('open');
+        });
+
+        // Закрытие меню настроек по клику вне его
+        document.addEventListener('click', function(e) {
+            if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) {
+                settingsMenu.classList.remove('open');
+            }
+        });
+
+        // Поддержка
+        document.getElementById('supportItem').addEventListener('click', function() {
+            settingsMenu.classList.remove('open');
+            if (window.Telegram && Telegram.WebApp) {
+                Telegram.WebApp.openTelegramLink('https://t.me/DrBled');
+            } else {
+                window.open('https://t.me/DrBled', '_blank');
+            }
+        });
+
+        // Условия пользования
+        const termsScreen = document.getElementById('termsScreen');
+        document.getElementById('termsItem').addEventListener('click', function() {
+            settingsMenu.classList.remove('open');
+            termsScreen.classList.add('open');
+        });
+
+        document.getElementById('termsBack').addEventListener('click', function() {
+            termsScreen.classList.remove('open');
+        });
+
+        // ===== Фильтры =====
         const filterBtn = document.getElementById('filterBtn');
         const filterMenu = document.getElementById('filterMenu');
 
