@@ -613,15 +613,16 @@
             border-radius: 12px;
             color: #ffffff;
             font-family: 'Comfortaa', sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(40, 55, 70, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             transition: background 0.15s ease, transform 0.1s ease;
+            white-space: nowrap;
         }
 
         .pay-btn:active {
@@ -761,7 +762,7 @@
 
         <div class="pay-btn-container">
             <button class="pay-btn" id="payBtn">
-                Оплатить корзину
+                Оплатить корзину (0 ₽)
             </button>
         </div>
     </div>
@@ -929,6 +930,15 @@
             setTimeout(() => floatBtn.style.transform = 'scale(1)', 150);
         }
 
+        function updateCartTotal() {
+            let total = 0;
+            for (let key in cart) {
+                total += cart[key].price * cart[key].qty;
+            }
+            const payBtn = document.getElementById('payBtn');
+            payBtn.textContent = `Оплатить корзину (${total} ₽)`;
+        }
+
         function updateCartUI() {
             const badge = document.getElementById('cartBadge');
             let totalQty = 0;
@@ -942,6 +952,9 @@
             } else {
                 badge.classList.remove('visible');
             }
+            
+            // Обновляем сумму на кнопке оплаты
+            updateCartTotal();
         }
 
         function renderCartScreen() {
@@ -1003,7 +1016,12 @@
         });
 
         document.getElementById('payBtn').addEventListener('click', function() {
-             alert('Переход к оплате... (функционал будет позже)');
+            const keys = Object.keys(cart);
+            if (keys.length === 0) {
+                alert('Корзина пуста!');
+                return;
+            }
+            alert('Переход к оплате... (функционал будет позже)');
         });
 
 
@@ -1102,6 +1120,8 @@
             render();
         });
 
+        // Инициализация суммы при загрузке
+        updateCartTotal();
         render();
     </script>
 </body>
