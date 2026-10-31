@@ -35,15 +35,63 @@
             overflow-x: hidden;
         }
 
-        /* ===== Панель действий ===== */
-        .action-bar {
+        /* ===== Закреплённая верхняя панель ===== */
+        .top-bar {
             position: fixed;
             top: 12px;
+            left: 12px;
             right: 12px;
             z-index: 100;
             display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        /* Поисковая панель */
+        .search-panel {
+            flex: 1;
+            min-width: 0;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 0 12px;
+            box-shadow: 0 2px 8px rgba(40, 70, 50, 0.25);
+        }
+
+        .search-icon {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 auto;
+            color: #2f5a3d;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2f5a3d;
+        }
+
+        .search-input::placeholder {
+            color: #7a9a85;
+            font-weight: 600;
+        }
+
+        /* Правая часть верхней панели — фильтры */
+        .action-bar {
+            display: flex;
             flex-direction: column;
             align-items: flex-end;
+            flex: 0 0 auto;
         }
 
         .filter-btn {
@@ -234,7 +282,7 @@
             align-items: flex-end;
             justify-content: center;
             text-align: center;
-            font-size: 10px;
+            font-size: 12px;
             line-height: 1.15;
             font-weight: 700;
             color: #ffffff;
@@ -253,7 +301,7 @@
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            font-size: 12px;
+            font-size: 10.5px;
             font-weight: 700;
             color: #ffffff;
             white-space: nowrap;
@@ -290,24 +338,34 @@
 </head>
 <body>
 
-    <div class="action-bar">
-        <button class="filter-btn" id="filterBtn" aria-label="Фильтры">
-            <span class="filter-icon">
-                <span></span><span></span><span></span>
-            </span>
-        </button>
-        <div class="filter-menu" id="filterMenu">
-            <div class="filter-row">
-                <div class="categories" id="categories"></div>
-                <div class="sort-buttons">
-                    <button class="sort-btn" id="sortDown">Цена ↓</button>
-                    <button class="sort-btn" id="sortUp">Цена ↑</button>
+    <!-- Закреплённая верхняя панель: поиск слева, фильтры справа -->
+    <div class="top-bar">
+        <div class="search-panel">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                <line x1="15.5" y1="15.5" x2="21" y2="21"></line>
+            </svg>
+            <input type="text" id="searchInput" class="search-input" placeholder="ищу...">
+        </div>
+        <div class="action-bar">
+            <button class="filter-btn" id="filterBtn" aria-label="Фильтры">
+                <span class="filter-icon">
+                    <span></span><span></span><span></span>
+                </span>
+            </button>
+            <div class="filter-menu" id="filterMenu">
+                <div class="filter-row">
+                    <div class="categories" id="categories"></div>
+                    <div class="sort-buttons">
+                        <button class="sort-btn" id="sortDown">Цена ↓</button>
+                        <button class="sort-btn" id="sortUp">Цена ↑</button>
+                    </div>
                 </div>
-            </div>
-            <div class="price-range">
-                <input type="number" id="priceMin" placeholder="от" min="0">
-                <span>—</span>
-                <input type="number" id="priceMax" placeholder="до" min="0">
+                <div class="price-range">
+                    <input type="number" id="priceMin" placeholder="от" min="0">
+                    <span>—</span>
+                    <input type="number" id="priceMax" placeholder="до" min="0">
+                </div>
             </div>
         </div>
     </div>
@@ -348,7 +406,7 @@
             { title: "Браслет", price: 390, category: "vintage" }
         ];
 
-        // Добавим товары в категории "ножи" и "пистолеты", чтобы фильтр было видно
+        // Дополнительные товары в категориях "ножи" и "пистолеты"
         products.push(
             { title: "Нож складной", price: 1590, category: "ножи" },
             { title: "Нож охотничий", price: 2790, category: "ножи" },
@@ -364,6 +422,7 @@
         let minPrice = null;
         let maxPrice = null;
         let selectedCategories = []; // выбранные категории (мультивыбор)
+        let searchQuery = '';        // поисковый запрос
 
         // Создаём кнопки категорий
         const categoriesContainer = document.getElementById('categories');
@@ -390,8 +449,9 @@
             let list = products.filter(function(p) {
                 if (minPrice !== null && p.price < minPrice) return false;
                 if (maxPrice !== null && p.price > maxPrice) return false;
-                // Если выбраны категории — товар должен быть хотя бы в одной из них
                 if (selectedCategories.length > 0 && selectedCategories.indexOf(p.category) === -1) return false;
+                // Поиск по названию (без учёта регистра)
+                if (searchQuery !== '' && p.title.toLowerCase().indexOf(searchQuery) === -1) return false;
                 return true;
             });
 
@@ -476,6 +536,12 @@
 
         priceMaxInput.addEventListener('input', function() {
             maxPrice = this.value === '' ? null : Number(this.value);
+            render();
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function() {
+            searchQuery = this.value.trim().toLowerCase();
             render();
         });
 
