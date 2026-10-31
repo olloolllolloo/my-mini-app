@@ -28,7 +28,6 @@
             background: linear-gradient(-45deg, #7fa88a, #6b9478, #86ad90, #5f8a6c);
             background-size: 400% 400%;
             animation: gradientShift 12s ease infinite;
-            /* Сверху резервируем место под панель действий */
             padding: 12px;
             padding-top: 64px;
             padding-bottom: 40px;
@@ -36,7 +35,7 @@
             overflow-x: hidden;
         }
 
-        /* ===== Панель действий сверху справа (закреплена) ===== */
+        /* ===== Панель действий сверху справа ===== */
         .action-bar {
             position: fixed;
             top: 12px;
@@ -47,7 +46,6 @@
             align-items: flex-end;
         }
 
-        /* Квадратная кнопка фильтров */
         .filter-btn {
             width: 44px;
             height: 44px;
@@ -67,7 +65,6 @@
             background: #284a34;
         }
 
-        /* Иконка "фильтры" (три полоски разной длины) */
         .filter-icon {
             display: flex;
             flex-direction: column;
@@ -102,7 +99,6 @@
             display: block;
         }
 
-        /* Кнопки сортировки по цене */
         .sort-buttons {
             display: flex;
             gap: 6px;
@@ -128,7 +124,6 @@
             color: #2f5a3d;
         }
 
-        /* Поля ввода цены */
         .price-range {
             display: flex;
             gap: 6px;
@@ -156,7 +151,7 @@
             font-weight: 700;
         }
 
-        /* ===== Сетка карточек ===== */
+        /* ===== Сетка ===== */
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -191,7 +186,7 @@
             min-height: 0;
         }
 
-        /* Картинка — остаток сверху */
+        /* Картинка — теперь ~2 из 8 */
         .card-image {
             flex: 1;
             background: rgba(255, 255, 255, 0.22);
@@ -199,7 +194,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 28px;
             color: rgba(255, 255, 255, 0.7);
             font-weight: 700;
             user-select: none;
@@ -207,7 +202,7 @@
             overflow: hidden;
         }
 
-        /* Название — 2 из 8, прижато к цене снизу */
+        /* Название — 2 из 8, сразу над ценой */
         .card-title {
             flex: 0 0 25%;
             display: flex;
@@ -227,7 +222,7 @@
             overflow-wrap: anywhere;
         }
 
-        /* Цена — 2 из 8, крупная, белая, без обводки */
+        /* Цена — 2 из 8, вплотную к кнопке */
         .card-price {
             flex: 0 0 25%;
             display: flex;
@@ -240,12 +235,7 @@
             overflow: hidden;
         }
 
-        /* Промежуток 0.5 из 8 */
-        .spacer-05 {
-            flex: 0 0 6.25%;
-        }
-
-        /* Кнопка — 2 из 8 */
+        /* Кнопка — 2 из 8, сразу под ценой */
         .card-btn {
             flex: 0 0 25%;
             display: flex;
@@ -274,7 +264,6 @@
 </head>
 <body>
 
-    <!-- Закреплённая панель действий -->
     <div class="action-bar">
         <button class="filter-btn" id="filterBtn" aria-label="Фильтры">
             <span class="filter-icon">
@@ -297,7 +286,6 @@
     <div class="grid" id="grid"></div>
 
     <script>
-        // Товары с ценами
         const products = [
             { title: "Кружка керамическая", price: 450 },
             { title: "Блокнот в клетку", price: 320 },
@@ -330,21 +318,17 @@
 
         const grid = document.getElementById('grid');
 
-        // Состояние фильтров
-        let sortOrder = null; // null | 'down' | 'up'
+        let sortOrder = null;
         let minPrice = null;
         let maxPrice = null;
 
-        // Отрисовка сетки
         function render() {
-            // Фильтрация
             let list = products.filter(function(p) {
                 if (minPrice !== null && p.price < minPrice) return false;
                 if (maxPrice !== null && p.price > maxPrice) return false;
                 return true;
             });
 
-            // Сортировка
             if (sortOrder === 'down') list.sort((a, b) => b.price - a.price);
             if (sortOrder === 'up') list.sort((a, b) => a.price - b.price);
 
@@ -369,9 +353,6 @@
                 priceEl.className = 'card-price';
                 priceEl.textContent = product.price + ' ₽';
 
-                const spacer05 = document.createElement('div');
-                spacer05.className = 'spacer-05';
-
                 const btn = document.createElement('button');
                 btn.className = 'card-btn';
                 btn.textContent = 'В корзину';
@@ -379,14 +360,12 @@
                 inner.appendChild(image);
                 inner.appendChild(titleEl);
                 inner.appendChild(priceEl);
-                inner.appendChild(spacer05);
                 inner.appendChild(btn);
                 card.appendChild(inner);
                 grid.appendChild(card);
             });
         }
 
-        // Открытие/закрытие меню фильтров
         const filterBtn = document.getElementById('filterBtn');
         const filterMenu = document.getElementById('filterMenu');
 
@@ -394,7 +373,6 @@
             filterMenu.classList.toggle('open');
         });
 
-        // Кнопки сортировки (взаимоисключающие)
         const sortDownBtn = document.getElementById('sortDown');
         const sortUpBtn = document.getElementById('sortUp');
 
@@ -422,7 +400,6 @@
             render();
         });
 
-        // Поля цены
         const priceMinInput = document.getElementById('priceMin');
         const priceMaxInput = document.getElementById('priceMax');
 
@@ -436,7 +413,6 @@
             render();
         });
 
-        // Первый рендер
         render();
     </script>
 </body>
