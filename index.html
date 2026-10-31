@@ -10,7 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Подключаем файл с данными товаров -->
     <script src="data.js"></script>
 
     <style>
@@ -222,7 +221,6 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.35);
             border-radius: 12px;
@@ -233,6 +231,8 @@
             padding: 10%;
             min-width: 0;
             overflow: hidden;
+            /* Фон задаётся через JS в зависимости от категории */
+            background: rgba(255, 255, 255, 0.18);
         }
 
         .card-inner {
@@ -451,13 +451,14 @@
         .cart-item-img {
             width: 50px;
             height: 50px;
-            background: rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
             overflow: hidden;
+            /* Фон задаётся через JS */
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .cart-item-img img {
@@ -650,7 +651,6 @@
 
     <div class="grid" id="grid"></div>
 
-    <!-- Плавающая кнопка корзины -->
     <div class="cart-float-btn" id="cartFloatBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="9" cy="21" r="1"></circle>
@@ -660,7 +660,6 @@
         <div class="cart-badge" id="cartBadge">0</div>
     </div>
 
-    <!-- Экран корзины -->
     <div class="cart-screen" id="cartScreen">
         <div class="cart-header">
             <button class="back-btn" id="cartBack" aria-label="Назад">
@@ -678,7 +677,6 @@
         </div>
     </div>
 
-    <!-- Экран условий -->
     <div class="terms-screen" id="termsScreen">
         <div class="terms-header">
             <button class="back-btn" id="termsBack" aria-label="Назад">
@@ -701,6 +699,29 @@
     </div>
 
     <script>
+        // ===== ОПРЕДЕЛЕНИЕ ЦВЕТА ФОНА ПО КАТЕГОРИИ =====
+        // Приоритет: chroma > godly > ancient > vintage
+        // ножи и пистолеты — не влияют на цвет
+        function getCategoryBackground(categories) {
+            const cats = Array.isArray(categories) ? categories : [categories];
+
+            if (cats.includes('chroma')) {
+                // Пастельный радужный градиент (без анимации)
+                return 'linear-gradient(135deg, #ffb3ba 0%, #ffdfba 20%, #ffffba 40%, #baffc9 60%, #bae1ff 80%, #e0baff 100%)';
+            }
+            if (cats.includes('godly')) {
+                return 'rgba(255, 150, 200, 0.45)'; // розовый
+            }
+            if (cats.includes('ancient')) {
+                return 'rgba(180, 140, 230, 0.45)'; // фиолетовый
+            }
+            if (cats.includes('vintage')) {
+                return 'rgba(255, 230, 130, 0.45)'; // желтый
+            }
+            // Дефолт — нейтральный полупрозрачный
+            return 'rgba(255, 255, 255, 0.18)';
+        }
+
         // ===== ПЕРЕМЕННЫЕ СОСТОЯНИЯ =====
         let cart = {};
         let sortOrder = null;
@@ -736,24 +757,19 @@
         // ===== РЕНДЕР СЕТКИ ТОВАРОВ =====
         function render() {
             let list = products.filter(function(p) {
-                // Фильтр по цене
                 if (minPrice !== null && p.price < minPrice) return false;
                 if (maxPrice !== null && p.price > maxPrice) return false;
 
-                // Фильтр по категориям (массив у товара)
-                // Показываем товар, если у него есть ХОТЯ БЫ ОДНА из выбранных категорий
                 if (selectedCategories.length > 0) {
                     const hasCategory = p.category.some(cat => selectedCategories.includes(cat));
                     if (!hasCategory) return false;
                 }
 
-                // Поиск по названию
                 if (searchQuery !== '' && p.title.toLowerCase().indexOf(searchQuery) === -1) return false;
 
                 return true;
             });
 
-            // Сортировка
             if (sortOrder === 'down') list.sort((a, b) => b.price - a.price);
             if (sortOrder === 'up') list.sort((a, b) => a.price - b.price);
 
@@ -762,6 +778,8 @@
             list.forEach(function(product) {
                 const card = document.createElement('div');
                 card.className = 'card';
+                // Устанавливаем цвет фона в зависимости от категории
+                card.style.background = getCategoryBackground(product.category);
 
                 const inner = document.createElement('div');
                 inner.className = 'card-inner';
@@ -772,7 +790,6 @@
                 img.src = product.image;
                 img.alt = product.title;
                 img.onerror = function() {
-                    // Если картинка не загрузилась — показываем "?"
                     this.style.display = 'none';
                     image.textContent = '?';
                 };
@@ -857,7 +874,7 @@
                 div.className = 'cart-item';
 
                 div.innerHTML = `
-                    <div class="cart-item-img">
+                    <div class="cart-item-img" style="background: ${getCategoryBackground(item.category)}">
                         <img src="${item.image}" alt="${item.title}" onerror="this.style.display='none';this.parentElement.textContent='?'">
                     </div>
                     <div class="cart-item-info">
@@ -885,7 +902,6 @@
             }
         };
 
-        // Открытие/закрытие корзины
         const cartFloatBtn = document.getElementById('cartFloatBtn');
         const cartScreen = document.getElementById('cartScreen');
         const cartBackBtn = document.getElementById('cartBack');
