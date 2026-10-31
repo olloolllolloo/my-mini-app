@@ -178,7 +178,7 @@
         .card-image {
             flex: 0 0 auto;
             width: 100%;
-            aspect-ratio: 1 / 1;   /* строгий квадрат */
+            aspect-ratio: 1 / 1;
             background: rgba(255, 255, 255, 0.22);
             border-radius: 8px;
             display: flex;
@@ -195,7 +195,7 @@
         .card-title {
             flex: 1 1 auto;
             display: flex;
-            align-items: flex-end;   /* прижато к низу */
+            align-items: flex-end;
             justify-content: center;
             text-align: center;
             font-size: 11px;
@@ -212,19 +212,20 @@
             min-height: 0;
         }
 
-        /* Цена — МЕНЬШЕ В 1.5 РАЗА, вплотную к кнопке */
+        /* Цена — жёлтая, ещё ниже (вплотную к кнопке) */
         .card-price {
             flex: 0 0 auto;
             display: flex;
-            align-items: flex-end;   /* прижато к низу, к кнопке */
+            align-items: flex-end;
             justify-content: center;
-            font-size: 11px;         /* было 16px → стало 11px ≈ /1.5 */
+            font-size: 11px;
             font-weight: 700;
-            color: #ffffff;
+            color: #ffe14d;
             white-space: nowrap;
             overflow: hidden;
             line-height: 1;
-            padding-bottom: 3px;
+            padding-bottom: 0;
+            margin-bottom: -1px;
         }
 
         /* Кнопка — сразу под ценой */
